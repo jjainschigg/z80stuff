@@ -25,7 +25,6 @@ The subroutine Spacemaker (see  Listing 2) constitutes an alternative ap-  proac
 
 The mechanics of the subroutine  are simple. When power is first ap-  plied to the TS-1000, the bootstrap  procedure of the ROM formats avail-  able memory in the pattern shown in  the memory map (Fig.l). The various  partitioned blocks are herded into  two broad sectors above and below a  central reservoir of free space. The  upper sector of system memory,  comprising the gosub and machine  stacks, is based at RAMTOP and  builds downward, starting at the ad-  dress immediately beneath the RAM-  TOP boundary. 
 
-```
 |Purpose| ZX-80 decimal memory location or system mnemonic |
 | :-- | :-- |
 |system variables|16384|
@@ -37,8 +36,7 @@ The mechanics of the subroutine  are simple. When power is first ap-  plied to t
 |FREE|STKEND|
 |machine stack|SP| 
 |GOSUB stack|ERR-SP| 
-|RAMTOP reserve|RAMTOP| 
-```
+|RAMTOP reserve|RAMTOP|
 
 _Figure 1. Memory map showing ROM patterns of the TS-1000 /ZX-81_
 
