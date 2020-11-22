@@ -2,7 +2,7 @@
 
 ## This useful utility lets the more serious Timex-Sinclair user make use of space in upper memory.
 
-#### By John Jainschigg
+#### By John Jainschigg (originally published in Microcomputing Magazine, September, 1983)
 
 Every Sinclair ZX-81 (and TS-1000) programmer must be familiar with the technique of resetting the system variable RAMTOP to procure space in upper memory. RAMTOP reserve space has several intriguing qualities: it is immobile and entirely immune to functions of Basic ROM (such as NEW and LOAD), making it ideal not only for the storage of machine code rou- tines, but also a tempting resource for use in binary data storage schemes and program-to-program communi- cations. Unfortunately for those who wish to experiment with these more exotic applications, the simple Basic procedure most commonly used for RAMTOP reset is inappropriate for several reasons. 
 
