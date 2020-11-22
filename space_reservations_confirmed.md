@@ -4,11 +4,11 @@
 
 #### By John Jainschigg
 
-Every Sinclair ZX-81 (and TS-1000) programmer must be familiar with the technique of resetting the  system variable RAMTOP to procure space in upper memory. RAMTOP reserve space has several intriguing qualities: it is immobile and entirely immune to functions of Basic ROM (such as NEW  and LOAD), making it ideal not only  for the storage of machine code rou-  tines, but also a tempting resource for  use in binary data storage schemes  and program-to-program communi-  cations. Unfortunately for those who  wish to experiment with these more  exotic applications, the simple Basic  procedure most commonly used for  RAMTOP reset is inappropriate for  several reasons. 
+Every Sinclair ZX-81 (and TS-1000) programmer must be familiar with the technique of resetting the system variable RAMTOP to procure space in upper memory. RAMTOP reserve space has several intriguing qualities: it is immobile and entirely immune to functions of Basic ROM (such as NEW and LOAD), making it ideal not only for the storage of machine code rou- tines, but also a tempting resource for use in binary data storage schemes and program-to-program communi- cations. Unfortunately for those who wish to experiment with these more exotic applications, the simple Basic procedure most commonly used for RAMTOP reset is inappropriate for several reasons. 
 
 ## The Normal Approach 
 
-Listing 1 demonstrates the usual  approach. The Basic statements are  entered from command mode on  power-up. The number of bytes of storage  space required is subtracted from the  normal value of RAMTOP (corresponding to the current configuration  of the TS-1000), and the result is poked  to the system variable in high/low  format. A NEW command then should be executed to zero system RAM and  to rearrange it beneath the new RAMTOP address.
+Listing 1 demonstrates the usual approach. The Basic statements are entered from command mode on power-up. The number of bytes of storage space required is subtracted from the normal value of RAMTOP (corresponding to the current configuration of the TS-1000), and the result is POKEd to the system variable in high/low format. A NEW command then should be executed to zero system RAM and to rearrange it beneath the new RAMTOP address.
 
 ```
 POKE 16388, (RAMTOP - #bytes) - INT ((((RAMTOP - #bytes)/256) * 256)) 
@@ -17,13 +17,13 @@ NEW
 ```
 _Listing 1. Usual approach to RAMTOP reset._
 
-NEW is the only Basic command  that incorporates reformatting. Unfortunately, it does so in a manner  destructive to the contents of memo-  ry, for which reason a Basic program  cannot use a runtime variant of the  above procedure to create space in  high memory for its own use. Instead,  the user must anticipate the need for  RAMTOP reserve and create it prior  to loading application programs. This two-step obligation is cumber-  some in itself, and the result of it has  been to limit the use of RAMTOP re-  serve space by Basic programmers to  schemes requiring predictable amounts  of offset— offset that can be calculated  and prepared ahead of runtime. 
+NEW is the only Basic command that incorporates reformatting. Unfortunately, it does so in a manner destructive to the contents of memory, for which reason a Basic program cannot use a runtime variant of the above procedure to create space in high memory for its own use. Instead, the user must anticipate the need for RAMTOP reserve and create it prior to loading application programs. This two-step obligation is cumbersome in itself, and the result of it has been to limit the use of RAMTOP re- serve space by Basic programmers to schemes requiring predictable amounts of offset — offset that can be calculated and prepared ahead of runtime. 
 
 ## Another Way 
 
-The subroutine Spacemaker (see  Listing 2) constitutes an alternative ap-  proach to RAMTOP reset. Spacemaker  creates RAMTOP reserve space in a  nondestructive way— by reformatting  the upper end of system memory. It  allows a Basic program that incor-  porates it to conjure any degree of  RAMTOP offset during execution and  to put that space to immediate use. 
+The subroutine Spacemaker (see Listing 2) constitutes an alternative approach to RAMTOP reset. Spacemaker creates RAMTOP reserve space in a nondestructive way — by reformatting the upper end of system memory. It allows a Basic program that incorporates it to conjure any degree of RAMTOP offset during execution and to put that space to immediate use. 
 
-The mechanics of the subroutine  are simple. When power is first ap-  plied to the TS-1000, the bootstrap  procedure of the ROM formats avail-  able memory in the pattern shown in  the memory map (Fig.l). The various  partitioned blocks are herded into  two broad sectors above and below a  central reservoir of free space. The  upper sector of system memory,  comprising the gosub and machine  stacks, is based at RAMTOP and  builds downward, starting at the ad-  dress immediately beneath the RAM-  TOP boundary. 
+The mechanics of the subroutine are simple. When power is first applied to the TS-1000, the bootstrap procedure of the ROM formats available memory in the pattern shown in the memory map (Fig.l). The various partitioned blocks are herded into two broad sectors above and below a central reservoir of free space. The upper sector of system memory, comprising the gosub and machine stacks, is based at RAMTOP and builds downward, starting at the address immediately beneath the RAMTOP boundary. 
 
 |Purpose| ZX-80 decimal memory location or system mnemonic |
 | :-- | :-- |
@@ -38,11 +38,11 @@ The mechanics of the subroutine  are simple. When power is first ap-  plied to t
 |GOSUB stack|ERR-SP| 
 |RAMTOP reserve|RAMTOP|
 
-_Figure 1. Memory map showing ROM patterns of the TS-1000 /ZX-81_
+_Figure 1. TS-1000 /ZX-81 memory map_
 
-Besides RAMTOP, two additional  pointers define the upper sector: the  system variable ERR-SP, which  marks the top (read "bottom") of the  gosub stack, and the stack pointer  register which marks the top (as  above) of the machine stack. Creating  RAMTOP reserve space is a matter of shifting the upper sector of system  memory downward by the desired  offset, and altering RAMTOP, ERR-  SP and the stack pointer by the same  value so that they point once more to  appropriate addresses.
+Besides RAMTOP, two additional pointers define the upper sector: the system variable ERR-SP, which marks the top (read "bottom") of the gosub stack, and the stack pointer register which marks the top (as above) of the machine stack. Creating RAMTOP reserve space is a matter of shifting the upper sector of system memory downward by the desired offset, and altering RAMTOP, ERR-SP and the stack pointer by the same value so that they point once more to appropriate addresses.
 
-Basic is not a practical tool for this  operation, however. One reason is  that the stack pointer, an internal  register of the Z-80 processor, cannot  be changed directly by Basic com-  mands. Another is that the block of  bytes we wish to move is used inten-  sively by the Basic system to manage  program execution. The solipsistic conflict that would  result from trying to use Basic to  relocate bytes whose values are simultaneously required to manage the  relocation would likely result in a  system crash (how's that again?). In  machine code, though, the procedure  is extremely straightforward, as the  subroutine's comments will show.
+Basic is not a practical tool for this operation, however. One reason is that the stack pointer, an internal register of the Z-80 processor, cannot be changed directly by Basic commands. Another is that the block of bytes we wish to move is used intensively by the Basic system to manage program execution. The solipsistic conflict that would result from trying to use Basic to relocate bytes whose values are simultaneously required to manage the relocation would likely result in a system crash (how's that again?). In machine code, though, the procedure is extremely straightforward, as the subroutine's comments will show.
 
 ```
 ADDRESS /MNEMONIC / CODE 
@@ -78,7 +78,7 @@ ADDRESS /MNEMONIC / CODE
 ```
 _Listing 2. Spacemaker subroutine: an alternative approach to RAMTOP reset_ 
 
-The Basic loader in Listing 3 serves  to place the decimal opcodes of  Spacemaker in a REM statement #1,  71 bytes in length, starting at address  16515 at the beginning of your Basic  program listing. To use the subrou-  tine, incorporate steps into the body  of the program to poke the number of  bytes of space required, in high/low  format, to subroutine variables  OFFLO and OFFHI at addresses 16533  and 16534. Spacemaker then may be called via a statement RAND USR  16515. 
+The Basic loader in Listing 3 serves to place the decimal opcodes of Spacemaker in a REM statement #1, 71 bytes in length, starting at address 16515 at the beginning of your Basic program listing. To use the subroutine, incorporate steps into the body of the program to poke the number of bytes of space required, in high/low format, to subroutine variables OFFLO and OFFHI at addresses 16533 and 16534. Spacemaker then may be called via a statement RAND USR 16515. 
 
 ```
 1 REM "(71 spaces) " 
@@ -90,10 +90,10 @@ The Basic loader in Listing 3 serves  to place the decimal opcodes of  Spacemake
 ```
 _Listing 3. Basic loader._ 
 
-_Note: When using Spacemaker, be careful  not to set off more free space than is  currently available to Basic. If you do,  the utility will copy the upper end of  the system RAM over the calculator  stack, and a dazzling system crash will  result. To help forestall this catastro-  phe, Spacemaker incorporates a sub-  utility, Free (in bytes 16569-16585),  which calculates how much space you  have available. Free should be called  prior to Spacemaker by incorporating  the statement:_ 
+_Note: When using Spacemaker, be careful not to set off more free space than is currently available to Basic. If you do, the utility will copy the upper end of the system RAM over the calculator stack, and a dazzling system crash will result. To help forestall this catastrophe, Spacemaker incorporates a sub-utility, Free (in bytes 16569-16585), which calculates how much space you have available. Free should be called prior to Spacemaker by incorporating the statement:_ 
 
 ```
 LET SPACE = USR 16569 
 ```
-_into your Basic program. As long as the  value returned for Space is somewhat  greater than the number of bytes you  wish to reserve, you should be okay. 
-The subroutine uses the free double byte at 16507 and 16508 as a  storage register during execution. The routine is relocatable as long  as the new locations of OFFLO and  OFFHI are taken into account, and the  relevant poke statements are altered accordingly._
+_... into your Basic program. As long as the value returned for Space is somewhat greater than the number of bytes you wish to reserve, you should be okay. 
+The subroutine uses the free double byte at 16507 and 16508 as a storage register during execution. The routine is relocatable as long as the new locations of OFFLO and OFFHI are taken into account, and the relevant poke statements are altered accordingly._
