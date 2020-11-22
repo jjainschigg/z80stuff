@@ -47,7 +47,7 @@ Listing 2. Spacemaker subroutine: an alternative approach to RAMTOP reset
 
 
 
-
+```
 1 system  variables 16384
 2 program 16509 
 3 display  file D-FILE
@@ -58,22 +58,19 @@ Listing 2. Spacemaker subroutine: an alternative approach to RAMTOP reset
 8 machine stack Stack  pointer 
 9 GOSUB ERR-SP 
 10 RAMTOP  reserve RAMTOP 
+```
+
+Figure 1. Memory map showing ROM patterns of the TS-1000 /ZX-81. 
 
 
-Fig. L 
-
-
-Memory map showing ROM patterns of the TS-1000 /ZX-81. 
-
-
-
+```
 1 REM "(71 spaces) " 
 5000 FOR X = 16515 TO 16585 
 5010 INPUT A 
 5020 PRINT A
 5030 POKE X,A 
 5040 NEXT X 
-
+```
 Listing 3. Basic loader. 
 
 Every Sinclair ZX-81 (and TS-1000)  programmer must be familiar  with the technique of resetting the  system variable RAMTOP to procure  space in upper memory. RAMTOP reserve space has several intriguing qualities: it is immo-  bile and entirely immune to func-  tions of Basic ROM (such as NEW  and LOAD), making it ideal not only  for the storage of machine code rou-  tines, but also a tempting resource for  use in binary data storage schemes  and program-to-program communi-  cations. Unfortunately for those who  wish to experiment with these more  exotic applications, the simple Basic  procedure most commonly used for  RAMTOP reset is inappropriate for  several reasons. 
